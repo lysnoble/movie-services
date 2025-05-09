@@ -62,8 +62,6 @@ app.get('/movies/genre', (req: Request, res: Response) => {
   movies.getMoviesByGenre(moviesDB, req, res);
 });
 
-
-
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
