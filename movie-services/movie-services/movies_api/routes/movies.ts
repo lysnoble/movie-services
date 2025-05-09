@@ -41,6 +41,43 @@ export const getAllMovies = (db: Database, req: Request, res: Response): void =>
   });
 };
 
+//ac 3
+export const getMoviesByYear = (db: Database, req: Request, res: Response): void => {
+  const year = req.params.year;
+  const page = parseInt(req.query.page as string) || 1;
+  const order = req.query.order === 'desc' ? 'DESC' : 'ASC';
+  const limit = 50;
+  const offset = (page - 1) * limit;
+
+  const query = `
+    SELECT imdbId, title, genres, release_date, budget
+    FROM movies
+    WHERE strftime('%Y', release_date) = ?
+    ORDER BY release_date ${order}
+    LIMIT ? OFFSET ?;
+  `;
+
+  db.all(query, [year, limit, offset], (err: Error | null, rows: any[]) => {
+    if (err) {
+      res.status(500).send(JSON.stringify(err));
+      return;
+    }
+
+    if (rows.length === 0) {
+      res.status(404).send('No movies found for the specified year');
+      return;
+    }
+
+    const formattedRows = rows.map(row => ({
+      ...row,
+      budget: `$${parseInt(row.budget).toLocaleString()}`
+    }));
+
+    res.send(formattedRows);
+  });
+};
+
+
 
 export const getMovie = (db: Database, req: Request, res: Response): void => {
   const query = 'SELECT * FROM movies WHERE movieId = ?';
