@@ -83,6 +83,55 @@ export const getMoviesByYear = (db: Database, req: Request, res: Response): void
   });
 };
 
+//AC 4
+export const getMoviesByGenre = (db: Database, req: Request, res: Response): void => {
+  const genreQuery = req.query.genre?.toString();
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = 50;
+  const offset = (page - 1) * limit;
+
+  if (!genreQuery) {
+    res.status(400).json({ error: 'Genre query parameter is required' });
+    return;
+  }
+
+  const query = `SELECT imdb_id, title, genres, release_date, budget FROM movies`;
+
+  db.all(query, [], (err: Error | null, rows: any[]) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    const filteredMovies = rows.filter(row => {
+      try {
+        const genres = JSON.parse(row.genres);
+        return genres.some((g: { name: string }) => g.name.toLowerCase() === genreQuery.toLowerCase());
+      } catch {
+        return false;
+      }
+    });
+
+    const paginatedMovies = filteredMovies.slice(offset, offset + limit).map(row => ({
+      imdb_id: row.imdb_id,
+      title: row.title,
+      genres: JSON.parse(row.genres),
+      release_date: row.release_date,
+      budget: `$${Number(row.budget).toLocaleString()}`
+    }));
+
+    if (paginatedMovies.length === 0) {
+      res.status(404).json({ message: 'No movies found for the specified genre' });
+      return;
+    }
+
+    res.json({
+      page,
+      count: paginatedMovies.length,
+      results: paginatedMovies
+    });
+  });
+};
 
 
 export const getMovie = (db: Database, req: Request, res: Response): void => {

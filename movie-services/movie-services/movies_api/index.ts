@@ -43,7 +43,7 @@ app.get('/ratings/:movieId', (req: Request, res: Response) => {
   ratings.getRating(ratingsDB, req, res)
 });
 
-//AC1 1
+//AC 1
 app.get('/movies/all', (req: Request, res: Response) => {
   movies.getAllMovies(moviesDB, req, res)
 });
@@ -57,6 +57,10 @@ app.get('/movies/year/:year', (req: Request, res: Response) => {
   movies.getMoviesByYear(moviesDB, req, res);
 });
 
+//AC 4
+app.get('/movies/genre', (req: Request, res: Response) => {
+  movies.getMoviesByGenre(moviesDB, req, res);
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
