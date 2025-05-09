@@ -43,6 +43,7 @@ app.get('/ratings/:movieId', (req: Request, res: Response) => {
   ratings.getRating(ratingsDB, req, res)
 });
 
+//AC1 1
 app.get('/movies/all', (req: Request, res: Response) => {
   movies.getAllMovies(moviesDB, req, res)
 });
