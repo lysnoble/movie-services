@@ -51,6 +51,12 @@ app.get('/movies/:movieId', (req: Request, res: Response) => {
   movies.getMovie(moviesDB, req, res)
 });
 
+//AC 3
+app.get('/movies/year/:year', (req: Request, res: Response) => {
+  movies.getMoviesByYear(moviesDB, req, res);
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
